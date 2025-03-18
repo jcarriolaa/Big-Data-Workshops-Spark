@@ -1,0 +1,48 @@
+# Dockerfile para PySpark local con JupyterLab
+FROM jupyter/pyspark-notebook:latest
+
+USER root
+
+# Actualizar e instalar paquetes adicionales
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    curl \
+    wget \
+    software-properties-common \
+    ssh \
+    && apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Configurar variables de entorno
+ENV SPARK_HOME=/usr/local/spark
+ENV PYTHONPATH=$SPARK_HOME/python:$SPARK_HOME/python/lib/py4j-0.10.9-src.zip:$PYTHONPATH
+ENV PATH=$SPARK_HOME/bin:$PATH
+
+# Instalar paquetes Python adicionales
+RUN pip install --no-cache-dir \
+    findspark \
+    matplotlib \
+    seaborn \
+    pandas \
+    numpy \
+    scikit-learn
+
+# Crear directorio para datos y notebooks
+RUN mkdir -p /home/jovyan/work/data /home/jovyan/work/notebooks
+
+# Copiar notebooks de ejemplo (si se tienen)
+# COPY notebooks/* /home/jovyan/work/notebooks/
+
+# Cambiar permisos
+RUN chown -R jovyan:users /home/jovyan/work
+
+USER jovyan
+
+# Exponer puerto para JupyterLab
+EXPOSE 8888
+
+# Crear un README con instrucciones
+RUN echo "# PySpark con JupyterLab\n\nEste contenedor incluye:\n- Apache Spark\n- JupyterLab\n- Python 3\n- Librerías como Pandas, NumPy, Matplotlib, etc.\n\nLos notebooks se guardan en el directorio /home/jovyan/work/notebooks\n" > /home/jovyan/work/README.md
+
+# Comando por defecto
+CMD ["start-notebook.sh", "--NotebookApp.token=''", "--NotebookApp.password=''"]
