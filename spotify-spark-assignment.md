@@ -167,7 +167,7 @@ Investiga qué factores están asociados con la popularidad de las canciones:
 # Tu código de análisis de popularidad aquí
 ```
 
-## Parte 3: Preguntas para Analizar (Para Estudiantes)
+## Parte 3: Preguntas para Analizar
 
 Los estudiantes deben escribir código Spark para responder las siguientes preguntas:
 
